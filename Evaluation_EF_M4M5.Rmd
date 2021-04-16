@@ -177,12 +177,12 @@ La qualité des bases vous paraît-elle satisfaisante ? Pourquoi ?
 - [ ] Non
 
 Liens vers les deux rapports html:
-- [FASTQC_R1](/shared/home/eflaven/EvaluationM4M5-EFLAVEN/SRR10390685_1_fastqc.html) 
-- [FASTQC_R2](file:///C:/Users/elodie.flaven/Downloads/SRR10390685_2_fastqc.html)
+- [FASTQC_R1](https://eflaven.github.io/Evaluation_M4M5_EF/SRR10390685_1_fastqc.html) 
+- [FASTQC_R2](https://eflaven.github.io/Evaluation_M4M5_EF/SRR10390685_2_fastqc.html)
 
 car <code> la qualité moyenne par base pour tous les reads (fichier R1 et fichier R2) est supérieur à 30 au niveau du Phred score </code> comme le montre <code> l'histogramme sur la qualité des séquences du rapport MultiQC </code>
 
-Lien vers le [rapport MulitQC](file:///C:/Users/elodie.flaven/Downloads/multiqc_report.html)
+Lien vers le [rapport MulitQC](https://eflaven.github.io/Evaluation_M4M5_EF/multiqc_report.html)
 
 Est-ce que les reads déposés ont subi une étape de nettoyage avant d'être déposés ? Pourquoi ?
 
@@ -247,6 +247,8 @@ module load samtools/1.10
 module load bwa/0.7.17
 module list
 
+srun gunzip ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.fna.gz
+
 #On commence par indexer le génome de ref avec bwa index (un fichier.fna est un fichier multi fasta)
 
 mkdir ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING
@@ -300,18 +302,31 @@ srun bedtools bamtobed -i ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/SRR10390685_o
 
 #On utilise la fonction intersect avec -c (ajout /ligne)
 
-srun bedtools intersect -a ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.gff -b ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/SRR10390685_on_ASM904v1.sort.bed  -c -f 0.50 > ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/intersect_Genref_SRR10390685_on_ASM904v1_f50.bed
+srun bedtools intersect -a ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.gff -b ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/SRR10390685_on_ASM904v1.sort.bed  -c -F 0.50 > ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/intersect_Genref_SRR10390685_on_ASM904v1_F50.bed
 
-
-srun grep "Name=trmNF" ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/intersect_Genref_SRR10390685_on_ASM904v1_f50.bed
+#Le comptage spécifique pour trmNF
+srun grep "Name=trmNF" ~/EvaluationM4M5-EFLAVEN/ANALYSE/MAPPING/intersect_Genref_SRR10390685_on_ASM904v1_F50.bed
 
 ```
 
-<code>0</code> reads chevauchent le gène d'intérêt avec au moins 50% de leur longueur.
+<code>2837</code> reads chevauchent le gène d'intérêt avec au moins 50% de leur longueur.
 
 
 ## Visualisation
 
 Utilisez <strong class="tool">IGV</strong> @igv sous [sa version en ligne](https://igv.org/app/) pour visualiser les alignements sur le gène. Faites une capture d'écran du gène entier.
+
+```{bash}
+#Annotation du génome de ref avec Samtools, IGV demande deux fichiers (.fasta et .fai)
+#Changement du .fna en .fasta
+mv ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.fna ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.fasta
+
+#.fai avec samtaools
+samtools faidx ~/EvaluationM4M5-EFLAVEN/ANALYSE/Bacillus_subtilis/ASM904v1/GCF_000009045.1_ASM904v1_genomic.fasta
+
+
+```
+
+![unchanged image](Align_gen_trmNF.jpg)
 
 # References
